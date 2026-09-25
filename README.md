@@ -230,12 +230,17 @@ Base UI 的 `AvatarImage` 只在图片 `loaded` 后才渲染，而该状态只�
 **`NODE_VERSION=24` 必须设。** Astro 7 要求 Node `>=22.12.0`，Cloudflare 默认版本偏低，
 不设会直接构建失败（仓库里已附 `.nvmrc`，但显式设环境变量更可靠）。
 
-**部署完必须回填域名。** 拿到 `*.workers.dev` 或 `*.pages.dev` 之后，把它填进
-`astro.config.mjs` 的 `site` 并再推一次，否则 sitemap 与 RSS 里的绝对链接仍指向占位的
-`https://example.com`。
+**域名信息（三处必须一起改）。** 站点对外域名是 `https://10090102.xyz`，`www.10090102.xyz`
+同样已绑定。它出现在三个地方：
 
-**想用自己域名。** 账号里已有 `cqustart.dpdns.org`，在项目的 Custom domains 里加一个子域
-（例如 `me.cqustart.dpdns.org`）即可，然后把这个最终域名填进 `site`。
+| 位置 | 字段 |
+|---|---|
+| `astro.config.mjs` | `site`（决定 sitemap / RSS 绝对链接与 canonical） |
+| `src/data/site.ts` | `url` |
+| `wrangler.jsonc` | `routes` 里的 `custom_domain` 条目 |
+
+**`workers.dev` 在国内不可访问。** Cloudflare 分配的那个 `*.workers.dev` 地址存在 DNS 污染，
+所以对外一律使用 `10090102.xyz`，不要把它当作正式地址去分享。
 
 ## 性能实测
 

@@ -3,6 +3,14 @@
   // 走 Cloudflare Pages 时此文件会被忽略，删掉也不影响。
   "name": "personalweb",
   "compatibility_date": "2026-09-25",
+
+  // 自定义域名。写进配置而不是只在面板点，这样每次 npx wrangler deploy
+  // 都按同一份配置收敛，域名不会在后续部署中被重置掉。
+  "routes": [
+    { "pattern": "10090102.xyz", "custom_domain": true },
+    { "pattern": "www.10090102.xyz", "custom_domain": true }
+  ],
+
   "assets": {
     "directory": "./dist",
     // 使用 Astro 生成的 dist/404.html 处理未匹配路径

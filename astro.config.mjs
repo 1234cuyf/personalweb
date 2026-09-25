@@ -6,8 +6,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  // 部署后替换为真实域名：影响 sitemap / RSS 的绝对链接
-  site: 'https://example.com',
+  // 站点真实域名，影响 sitemap / RSS 的绝对链接与 canonical
+  site: 'https://10090102.xyz',
   integrations: [react(), sitemap()],
   vite: {
     plugins: [tailwindcss()],

@@ -34,7 +34,7 @@ export const site = {
    * 部署域名。必须和 astro.config.mjs 里的 site 保持一致，
    * 否则 sitemap 与 RSS 中的绝对链接会指向错误域名。
    */
-  url: 'https://example.com',
+  url: 'https://10090102.xyz',
 
   /**
    * 头像。把图片放进 public/ 后填绝对路径，例如 '/avatar.jpg'。
