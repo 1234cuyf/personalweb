@@ -65,9 +65,7 @@ function PlainShell({
 type BoundaryProps = {
   fallback: ReactNode;
   children: ReactNode;
-};
-
-type BoundaryState = {
+};type BoundaryState = {
   failed: boolean;
 };
 
@@ -86,6 +84,29 @@ class ShellBoundary extends Component<BoundaryProps, BoundaryState> {
   render() {
     return this.state.failed ? this.props.fallback : this.props.children;
   }
+}
+
+/** 路径 → 页面名。未命中导航时回退到这张表（例如没进导航的「关于」）。 */
+const EXTRA_PAGE_LABELS: Record<string, string> = {
+  '/about': '关于',
+};
+
+/**
+ * 顶栏显示的是「你现在在哪一页」，而不是站名 ——
+ * 站名已经在侧边栏品牌区和首页 h1 出现两次了。
+ */
+function resolvePageLabel(nav: NavItem[], currentPath: string): string | undefined {
+  const navMatch = nav.find((item) =>
+    item.href === '/'
+      ? currentPath === '/'
+      : currentPath === item.href || currentPath.startsWith(`${item.href}/`)
+  );
+  if (navMatch) return navMatch.label;
+
+  const extra = Object.keys(EXTRA_PAGE_LABELS).find(
+    (href) => currentPath === href || currentPath.startsWith(`${href}/`)
+  );
+  return extra ? EXTRA_PAGE_LABELS[extra] : undefined;
 }
 
 /**
@@ -140,7 +161,9 @@ export default function SiteShell({
           <SidebarInset>
             <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border/60 px-4">
               <SidebarTrigger className="-ml-1" />
-              <span className="truncate text-sm font-medium">{config.title}</span>
+              <span className="truncate text-sm font-medium">
+                {resolvePageLabel(nav, currentPath) ?? config.title}
+              </span>
             </header>
 
             <div className="flex-1">{children}</div>

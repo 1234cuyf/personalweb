@@ -228,9 +228,16 @@ export default function AppSidebar({
               <BrandAvatar src={config.avatar} name={config.author} className="size-8 rounded-lg" />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{config.author}</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {config.description || config.title}
-                </span>
+                {/*
+                  只在填了简介时显示第二行。
+                  之前用 {config.description || config.title} 回退，而 title 默认等于 author，
+                  空简介时就会渲染成「张豆豆 / 张豆豆」。
+                */}
+                {config.description && (
+                  <span className="truncate text-xs text-muted-foreground">
+                    {config.description}
+                  </span>
+                )}
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
