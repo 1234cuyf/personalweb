@@ -23,6 +23,8 @@ export type EducationItem = {
 export type SkillGroup = {
   group: string;
   items: string[];
+  /** 熟练度 0-100。留空则技能表里显示「—」 */
+  level?: number;
 };
 
 /**

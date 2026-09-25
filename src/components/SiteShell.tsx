@@ -16,6 +16,7 @@ import AppSidebar, {
   type NavItem,
   type SiteConfig,
 } from '@/components/AppSidebar';
+import type { SearchItem } from '@/lib/search';
 
 /**
  * 外壳崩溃时的降级视图。
@@ -101,11 +102,13 @@ export default function SiteShell({
   nav,
   currentPath,
   config,
+  searchItems,
   children,
 }: {
   nav: NavItem[];
   currentPath: string;
   config: SiteConfig;
+  searchItems: SearchItem[];
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(true);
@@ -127,7 +130,12 @@ export default function SiteShell({
     >
       <TooltipProvider>
         <SidebarProvider open={open} onOpenChange={setOpen}>
-          <AppSidebar nav={nav} currentPath={currentPath} config={config} />
+          <AppSidebar
+            nav={nav}
+            currentPath={currentPath}
+            config={config}
+            searchItems={searchItems}
+          />
 
           <SidebarInset>
             <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border/60 px-4">

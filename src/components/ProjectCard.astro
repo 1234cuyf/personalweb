@@ -1,5 +1,6 @@
 ---
 import { Badge } from '@/components/ui/badge';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import {
   Card,
   CardAction,
@@ -16,11 +17,25 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const { title, description, pubDate, tech, repo, demo, featured } =
+const { title, description, pubDate, tech, repo, demo, featured, cover } =
   project.data;
 ---
 
 <Card className="h-full">
+  {
+    cover && (
+      <AspectRatio ratio={16 / 9}>
+        <img
+          src={cover}
+          alt={title}
+          loading="lazy"
+          decoding="async"
+          class="size-full object-cover"
+        />
+      </AspectRatio>
+    )
+  }
+
   <CardHeader>
     <CardTitle>
       <a href={`/projects/${project.id}`} class="hover:underline">

@@ -1,0 +1,36 @@
+---
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+
+interface Props {
+  /** 最后一项不带 href，会渲染成当前页 */
+  items: { label: string; href?: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<Breadcrumb className="mb-6">
+  <BreadcrumbList>
+    {
+      items.map((item, index) => (
+        <>
+          <BreadcrumbItem>
+            {item.href ? (
+              <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+            ) : (
+              <BreadcrumbPage>{item.label}</BreadcrumbPage>
+            )}
+          </BreadcrumbItem>
+          {index < items.length - 1 && <BreadcrumbSeparator />}
+        </>
+      ))
+    }
+  </BreadcrumbList>
+</Breadcrumb>

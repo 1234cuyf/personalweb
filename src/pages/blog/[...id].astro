@@ -1,6 +1,7 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageBreadcrumb from '@/components/PageBreadcrumb.astro';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { formatDate, getPosts } from '@/lib/content';
@@ -25,15 +26,16 @@ const { Content } = await render(post);
 
 <BaseLayout title={title} description={description}>
   <article class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-    <a
-      href="/blog"
-      class="text-sm text-muted-foreground transition-colors hover:text-foreground"
-    >
-      ← 全部文章
-    </a>
+    <PageBreadcrumb
+      items={[
+        { label: '首页', href: '/' },
+        { label: '博客', href: '/blog' },
+        { label: title },
+      ]}
+    />
 
     <h1
-      class="mt-6 font-heading text-3xl font-semibold tracking-tight text-balance"
+      class="font-heading text-3xl font-semibold tracking-tight text-balance"
     >
       {title}
     </h1>

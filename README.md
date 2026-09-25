@@ -249,6 +249,43 @@ Base UI: MenuGroupContext is missing. Menu group parts must be used within
 `PlainShell`（只有导航和内容的简易布局）。如果浏览器控制台出现 `[SiteShell] 渲染失败`，
 说明踩到了这类问题。
 
+### 9. shadcn 组件清单与接线状态
+
+`src/components/ui/` 下共 32 个组件。**已经接进站点**的：
+
+| 组件 | 用在哪 |
+|---|---|
+| `sidebar` `dropdown-menu` `tooltip` `sheet` `collapsible` | 整站侧边栏外壳 |
+| `command` `dialog` `kbd` `empty` | ⌘K 站内搜索（侧边栏「搜索」那一项，或按 Ctrl+K） |
+| `breadcrumb` | 关于 / 简历 / 博客 / 作品 页顶部 |
+| `alert` | 首页 —— 内容为空时的提示 |
+| `avatar` `button` `separator` `badge` `card` `item` | 侧边栏、卡片、列表 |
+| `table` `progress` | 简历技能表（需要给 `resume.skills[].level` 填 0-100） |
+| `accordion` | 简历工作经历折叠 |
+| `aspect-ratio` | 作品卡片封面（配了 `cover` 才渲染） |
+| `skeleton` `input` | 侧边栏内部依赖 |
+
+**装了但还没接线的**（要有真实内容或额外功能才有意义）：
+
+| 组件 | 建议用在哪 |
+|---|---|
+| `pagination` | 文章/作品变多后，列表底部分页（需要先加分页路由） |
+| `carousel` | 作品多图展示 |
+| `hover-card` | 链接悬停预览 |
+| `popover` | 脚注、行内补充说明 |
+| `scroll-area` | 文章长目录侧栏 |
+| `tabs` | 作品详情分栏（简介 / 技术 / 结果） |
+| `spinner` | 静态站没有加载态，基本用不上 |
+
+**没有装的**（与个人内容站无关）：`bubble` `message` `marker` `attachment` `questionnaire`
+（对话 UI）、`chart`（图表）、`data-table`（需要 TanStack Table）、`calendar` `date-picker`
+（日期选择）、`input-otp`（验证码）、`field` `label` `select` `checkbox` `radio-group`
+`textarea` `input-group`（表单 —— 本站没有后端）、`menubar` `navigation-menu` `context-menu`
+`resizable` `direction`。
+
+**加新的交互组件时**：整套组合必须写在一个 `.tsx` 里（原因见第 2 条与第 8 条），
+然后在 `.astro` 里用 `client:load` 引入。嵌在 `SiteShell` 岛内部是可行的，已验证。
+
 ## 部署到 Cloudflare
 
 远端仓库：`git@github.com:1234cuyf/personalweb.git`

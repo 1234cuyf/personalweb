@@ -2,8 +2,10 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
 import PostCard from '@/components/PostCard.astro';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { buttonVariants } from '@/components/ui/button';
+import { InfoIcon } from 'lucide-react';
 import { getPosts, getProjects } from '@/lib/content';
 import { site } from '@/data/site';
 
@@ -59,6 +61,20 @@ const hasPosts = posts.length > 0;
         </div>
       </div>
   </section>
+
+  {
+    !hasProjects && !hasPosts && (
+      <div class="mx-auto max-w-5xl px-4 pb-12 sm:px-6">
+        <Alert>
+          <InfoIcon />
+          <AlertTitle>站点刚起步</AlertTitle>
+          <AlertDescription>
+            作品和文章还在整理中，之后会陆续放上来。
+          </AlertDescription>
+        </Alert>
+      </div>
+    )
+  }
 
   {
     shownProjects.length > 0 && (

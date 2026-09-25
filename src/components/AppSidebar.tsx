@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   BookOpen,
+  ChevronRightIcon,
   ChevronsUpDownIcon,
   FileText,
   FolderIcon,
@@ -14,6 +15,11 @@ import {
 } from 'lucide-react';
 
 import { Avatar } from '@/components/ui/avatar';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +44,8 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar';
+import SearchDialog from '@/components/SearchDialog';
+import type { SearchItem } from '@/lib/search';
 
 export type NavItem = {
   label: string;
@@ -92,9 +100,10 @@ function BrandAvatar({ src, name, className }: { src: string; name: string; clas
 }
 
 /**
- * 侧边栏底部的用户菜单。
- * 结构参考 shadcn 的 NavUser：触发器显示头像 + 名字 + 邮箱，
- * 菜单里放联系方式与主题切换。
+ * 侧边栏底部的用户菜单（结构参考 shadcn 的 NavUser）。
+ *
+ * 注意 DropdownMenuLabel 必须包在 DropdownMenuGroup 里，
+ * 否则 Base UI 抛 MenuGroupContext is missing，点开菜单会整页白屏。
  */
 function UserMenu({ config }: { config: SiteConfig }) {
   const [theme, setTheme] = useState<Theme>('system');
@@ -176,10 +185,7 @@ function UserMenu({ config }: { config: SiteConfig }) {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuRadioGroup
-          value={theme}
-          onValueChange={(value) => apply(value as Theme)}
-        >
+        <DropdownMenuRadioGroup value={theme} onValueChange={(value) => apply(value as Theme)}>
           <DropdownMenuRadioItem value="light">
             <SunIcon />
             浅色
@@ -202,10 +208,12 @@ export default function AppSidebar({
   nav,
   currentPath,
   config,
+  searchItems,
 }: {
   nav: NavItem[];
   currentPath: string;
   config: SiteConfig;
+  searchItems: SearchItem[];
 }) {
   return (
     <Sidebar collapsible="icon">
@@ -226,28 +234,43 @@ export default function AppSidebar({
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>导航</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {nav.map((item) => {
-                const Icon = item.icon ? ICONS[item.icon] : undefined;
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      render={<a href={item.href} />}
-                      isActive={isActiveHref(item.href, currentPath)}
-                      tooltip={item.label}
-                    >
-                      {Icon ? <Icon /> : null}
-                      <span>{item.label}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
+        <SidebarGroup className="pb-0">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SearchDialog items={searchItems} />
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarGroup>
+
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel render={<CollapsibleTrigger />}>
+              导航
+              <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-open/collapsible:rotate-90" />
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {nav.map((item) => {
+                    const Icon = item.icon ? ICONS[item.icon] : undefined;
+                    return (
+                      <SidebarMenuItem key={item.href}>
+                        <SidebarMenuButton
+                          render={<a href={item.href} />}
+                          isActive={isActiveHref(item.href, currentPath)}
+                          tooltip={item.label}
+                        >
+                          {Icon ? <Icon /> : null}
+                          <span>{item.label}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
       </SidebarContent>
 
       <SidebarFooter>

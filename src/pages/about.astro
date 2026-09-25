@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageBreadcrumb from '@/components/PageBreadcrumb.astro';
 import { Separator } from '@/components/ui/separator';
 import { site } from '@/data/site';
 
@@ -8,6 +9,10 @@ const hasBio = site.bio.length > 0;
 
 <BaseLayout title="关于">
   <section class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    <PageBreadcrumb
+      items={[{ label: '首页', href: '/' }, { label: '关于' }]}
+    />
+
     <h1 class="font-heading text-3xl font-semibold tracking-tight">
       {site.author}
     </h1>
