@@ -1,6 +1,8 @@
 export type NavItem = {
   label: string;
   href: string;
+  /** 侧边栏图标名，可选值见 AppSidebar.tsx 的 ICONS 映射；留空则不显示图标 */
+  icon?: string;
 };
 
 export type SocialLink = {
@@ -55,10 +57,10 @@ export const site = {
    * 等你把上面的 bio 填上，再把这行加回来：{ label: '关于', href: '/about' }
    */
   nav: [
-    { label: '首页', href: '/' },
-    { label: '作品', href: '/projects' },
-    { label: '博客', href: '/blog' },
-    { label: '简历', href: '/resume' },
+    { label: '首页', href: '/', icon: 'home' },
+    { label: '作品', href: '/projects', icon: 'folder' },
+    { label: '博客', href: '/blog', icon: 'book' },
+    { label: '简历', href: '/resume', icon: 'file-text' },
   ] as NavItem[],
 
   /**

@@ -193,6 +193,36 @@ Base UI 的 `AvatarImage` 只在图片 `loaded` 后才渲染，而该状态只�
 <a href="/x" class={buttonVariants({ variant: 'outline' })}>链接</a>
 ```
 
+### 6. 整站外壳是一个 React 岛
+
+`src/layouts/BaseLayout.astro` 里整个页面被包在 `<SiteShell client:load>` 中。这不是随意选的：
+
+- shadcn 的 `Sidebar` 依赖 `SidebarProvider` 的 React context
+- Astro 会独立渲染 `.astro` 里的每个框架组件，context 不跨组件边界传递
+- 桌面端布局靠 `Sidebar` 内部的 **gap 元素**与 `SidebarInset` 作为 **flex 兄弟节点**撑开
+
+三条加起来，页面内容必须待在 provider 里面。Astro 的实现是把 children 渲染进 `<astro-slot>`，
+水合时再作为 `children` 交给 React —— 所以页面内容仍然是构建期生成的静态 HTML，不需要水合。
+
+**改动须知**：不要在这些页面里再放带 `client:*` 的岛，那会嵌进这个岛内部，容易出问题。
+需要新的交互组件时，优先做成 `AppSidebar.tsx` / `SiteShell.tsx` 内部的一个普通 React 组件
+（主题菜单就是这么做的），而不是另开一个岛。
+
+**代价**：整站 JS 从约 93 KB(gzip) 升到约 134 KB(gzip) —— 侧边栏、Tooltip、Sheet、DropdownMenu
+都进了客户端包。这是这个组件的固有成本。
+
+### 7. 侧边栏相关文件
+
+| 文件 | 作用 |
+|---|---|
+| `src/components/ui/sidebar.tsx` | shadcn 生成，不要手改 |
+| `src/components/AppSidebar.tsx` | 侧边栏内容：品牌区、导航、主题菜单、RSS |
+| `src/components/SiteShell.tsx` | `SidebarProvider` + 侧边栏 + 内容区 + 页脚 |
+| `src/hooks/use-mobile.ts` | 侧边栏的移动端断点判断 |
+
+导航项的图标在 `src/data/site.ts` 的 `nav[].icon` 里填名字，可选值见 `AppSidebar.tsx` 的 `ICONS` 映射
+（`home` / `folder` / `book` / `file-text`）。
+
 ## 部署到 Cloudflare
 
 远端仓库：`git@github.com:1234cuyf/personalweb.git`
