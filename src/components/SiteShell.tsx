@@ -55,31 +55,9 @@ export default function SiteShell({
           <div className="flex-1">{children}</div>
 
           <footer className="border-t border-border/60 px-6 py-6 text-sm text-muted-foreground">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p>
-                © {new Date().getFullYear()} {config.author}
-              </p>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                {config.email && (
-                  <a
-                    href={`mailto:${config.email}`}
-                    className="transition-colors hover:text-foreground"
-                  >
-                    {config.email}
-                  </a>
-                )}
-                {config.social.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    rel="noopener"
-                    className="transition-colors hover:text-foreground"
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </div>
-            </div>
+            <p>
+              © {new Date().getFullYear()} {config.author}
+            </p>
           </footer>
         </SidebarInset>
       </SidebarProvider>

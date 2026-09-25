@@ -64,8 +64,9 @@ export const site = {
   ] as NavItem[],
 
   /**
-   * 社交链接，显示在页脚。留空则页脚只显示邮箱与 RSS。
-   * 例：{ label: 'GitHub', href: 'https://github.com/1234cuyf' }
+   * 社交链接，显示在侧边栏底部用户菜单里。留空则该组只剩邮箱与 RSS。
    */
-  social: [] as SocialLink[],
+  social: [
+    { label: 'GitHub', href: 'https://github.com/1234cuyf' },
+  ] as SocialLink[],
 };

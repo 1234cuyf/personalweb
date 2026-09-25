@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import {
   BookOpen,
+  ChevronsUpDownIcon,
   FileText,
   FolderIcon,
   HomeIcon,
+  LinkIcon,
+  MailIcon,
   MonitorIcon,
   MoonIcon,
   RssIcon,
@@ -14,7 +17,12 @@ import { Avatar } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -56,12 +64,6 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 
 type Theme = 'light' | 'dark' | 'system';
 
-const THEME_LABELS: Record<Theme, string> = {
-  light: '浅色',
-  dark: '深色',
-  system: '跟随系统',
-};
-
 /** 必须与 BaseLayout.astro 里那段阻塞式主题脚本用的键名一致 */
 const THEME_STORAGE_KEY = 'theme';
 
@@ -74,10 +76,30 @@ function isActiveHref(href: string, currentPath: string): boolean {
   return currentPath === href || currentPath.startsWith(`${href}/`);
 }
 
-function ThemeMenu() {
+/** 字母头像。配了图片就用图片，否则用名字首字。 */
+function BrandAvatar({ src, name, className }: { src: string; name: string; className?: string }) {
+  return (
+    <Avatar className={className}>
+      {src ? (
+        <img src={src} alt={name} className="size-full rounded-lg object-cover" />
+      ) : (
+        <span className="flex size-full items-center justify-center rounded-lg bg-sidebar-primary text-sm font-medium text-sidebar-primary-foreground">
+          {name.trim().slice(0, 1) || '·'}
+        </span>
+      )}
+    </Avatar>
+  );
+}
+
+/**
+ * 侧边栏底部的用户菜单。
+ * 结构参考 shadcn 的 NavUser：触发器显示头像 + 名字 + 邮箱，
+ * 菜单里放联系方式与主题切换。
+ */
+function UserMenu({ config }: { config: SiteConfig }) {
   const [theme, setTheme] = useState<Theme>('system');
 
-  // 首屏主题已由 BaseLayout 的阻塞式脚本应用，这里只同步菜单里的状态文案
+  // 首屏主题已由 BaseLayout 的阻塞式脚本应用，这里只同步菜单里的选中态
   useEffect(() => {
     const stored = localStorage.getItem(THEME_STORAGE_KEY);
     if (stored === 'light' || stored === 'dark' || stored === 'system') {
@@ -99,28 +121,76 @@ function ThemeMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<SidebarMenuButton />}>
-        <SunIcon className="dark:hidden" />
-        <MoonIcon className="hidden dark:block" />
-        <span>主题</span>
-        <span className="ml-auto text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-          {THEME_LABELS[theme]}
-        </span>
+      <DropdownMenuTrigger
+        render={
+          <SidebarMenuButton
+            size="lg"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          />
+        }
+      >
+        <BrandAvatar src={config.avatar} name={config.author} className="size-8 rounded-lg" />
+        <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+          <span className="truncate font-medium">{config.author}</span>
+          <span className="truncate text-xs text-muted-foreground">{config.email}</span>
+        </div>
+        <ChevronsUpDownIcon className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent side="right" align="start" className="min-w-32">
-        <DropdownMenuItem onClick={() => apply('light')}>
-          <SunIcon />
-          浅色
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => apply('dark')}>
-          <MoonIcon />
-          深色
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => apply('system')}>
-          <MonitorIcon />
-          跟随系统
-        </DropdownMenuItem>
+      <DropdownMenuContent side="right" align="end" sideOffset={4} className="w-60">
+        <DropdownMenuLabel className="p-0 font-normal">
+          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+            <BrandAvatar src={config.avatar} name={config.author} className="size-8 rounded-lg" />
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-medium">{config.author}</span>
+              <span className="truncate text-xs text-muted-foreground">{config.email}</span>
+            </div>
+          </div>
+        </DropdownMenuLabel>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuGroup>
+          {config.email && (
+            <DropdownMenuItem render={<a href={`mailto:${config.email}`} />}>
+              <MailIcon />
+              邮箱
+            </DropdownMenuItem>
+          )}
+          {config.social.map((link) => (
+            <DropdownMenuItem
+              key={link.href}
+              render={<a href={link.href} target="_blank" rel="noopener noreferrer" />}
+            >
+              <LinkIcon />
+              {link.label}
+            </DropdownMenuItem>
+          ))}
+          <DropdownMenuItem render={<a href="/rss.xml" />}>
+            <RssIcon />
+            RSS 订阅
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuRadioGroup
+          value={theme}
+          onValueChange={(value) => apply(value as Theme)}
+        >
+          <DropdownMenuRadioItem value="light">
+            <SunIcon />
+            浅色
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="dark">
+            <MoonIcon />
+            深色
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="system">
+            <MonitorIcon />
+            跟随系统
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -141,19 +211,7 @@ export default function AppSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<a href="/" />} tooltip={config.author}>
-              <Avatar className="size-8 rounded-lg">
-                {config.avatar ? (
-                  <img
-                    src={config.avatar}
-                    alt={config.author}
-                    className="size-full rounded-lg object-cover"
-                  />
-                ) : (
-                  <span className="flex size-full items-center justify-center rounded-lg bg-sidebar-primary text-sm font-medium text-sidebar-primary-foreground">
-                    {config.author.trim().slice(0, 1) || '·'}
-                  </span>
-                )}
-              </Avatar>
+              <BrandAvatar src={config.avatar} name={config.author} className="size-8 rounded-lg" />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{config.author}</span>
                 <span className="truncate text-xs text-muted-foreground">
@@ -193,13 +251,7 @@ export default function AppSidebar({
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <ThemeMenu />
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton render={<a href="/rss.xml" />} tooltip="RSS 订阅">
-              <RssIcon />
-              <span>RSS</span>
-            </SidebarMenuButton>
+            <UserMenu config={config} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
