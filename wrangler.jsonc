@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers 静态资源配置。
+  // 走 Cloudflare Pages 时此文件会被忽略，删掉也不影响。
+  "name": "personalweb",
+  "compatibility_date": "2026-09-25",
+  "assets": {
+    "directory": "./dist",
+    // 使用 Astro 生成的 dist/404.html 处理未匹配路径
+    "not_found_handling": "404-page"
+  }
+}

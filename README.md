@@ -193,31 +193,49 @@ Base UI 的 `AvatarImage` 只在图片 `loaded` 后才渲染，而该状态只�
 <a href="/x" class={buttonVariants({ variant: 'outline' })}>链接</a>
 ```
 
-## 部署到 Cloudflare Pages
+## 部署到 Cloudflare
 
-1. 把仓库推到一个 Git 远端（GitHub / GitLab）
-2. Cloudflare Dashboard → **Workers & Pages** → Create → **Pages** → 连接该仓库
-3. 构建配置：
-   - Build command：`npm run build`
-   - Build output directory：`dist`
-4. **设置环境变量 `NODE_VERSION=24`** —— Astro 7 要求 Node `>=22.12.0`，
-   若 Pages 默认版本偏低会直接构建失败（仓库里已附 `.nvmrc`，但显式设环境变量更可靠）
-5. 部署完成后拿到 `*.pages.dev` 域名，把这个域名回填到 `astro.config.mjs` 的 `site`，
-   再重新部署一次。否则 sitemap 与 RSS 里的绝对链接仍指向占位的 `https://example.com`
+远端仓库：`git@github.com:1234cuyf/personalweb.git`
 
-### 备选：Cloudflare Workers 静态资源
+面板路径：Dashboard → 左侧 **Build → Compute** → **Create application** → **Connect GitHub**。
 
-Cloudflare 目前推荐新项目用 Workers 承载静态资源。构建产物完全相同，只需在仓库根目录加 `wrangler.jsonc`：
+新面板把原来的 "Workers & Pages" 收进了 **Compute**，顶层已经看不到。快捷入口：
+`https://dash.cloudflare.com/?to=/:account/workers-and-pages`
 
-```jsonc
-{
-  "name": "personalweb",
-  "compatibility_date": "2026-09-01",
-  "assets": { "directory": "./dist", "not_found_handling": "404-page" }
-}
-```
+### 走 Workers 静态资源（新面板的默认路径，推荐）
 
-然后把构建/部署命令改为 `npx astro build && npx wrangler deploy`。
+仓库里已经配好 `wrangler.jsonc`，`wrangler` 也已装进 devDependencies，直接填：
+
+| 配置项 | 值 |
+|---|---|
+| Project name | `personalweb` |
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Environment variable | **`NODE_VERSION` = `24`** |
+
+本地可以先跑 `npx wrangler deploy --dry-run` 校验配置（只读取文件，不上传）。
+
+### 走 Pages（如果面板里能找到 Pages 入口）
+
+| 配置项 | 值 |
+|---|---|
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Environment variable | **`NODE_VERSION` = `24`** |
+
+此时 `wrangler.jsonc` 会被忽略，保留或删掉都可以。
+
+### 两条路都适用的注意事项
+
+**`NODE_VERSION=24` 必须设。** Astro 7 要求 Node `>=22.12.0`，Cloudflare 默认版本偏低，
+不设会直接构建失败（仓库里已附 `.nvmrc`，但显式设环境变量更可靠）。
+
+**部署完必须回填域名。** 拿到 `*.workers.dev` 或 `*.pages.dev` 之后，把它填进
+`astro.config.mjs` 的 `site` 并再推一次，否则 sitemap 与 RSS 里的绝对链接仍指向占位的
+`https://example.com`。
+
+**想用自己域名。** 账号里已有 `cqustart.dpdns.org`，在项目的 Custom domains 里加一个子域
+（例如 `me.cqustart.dpdns.org`）即可，然后把这个最终域名填进 `site`。
 
 ## 性能实测
 
