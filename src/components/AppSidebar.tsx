@@ -146,7 +146,11 @@ function UserMenu({ config }: { config: SiteConfig }) {
         <ChevronsUpDownIcon className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent side="right" align="end" sideOffset={4} className="w-60">
+      {/*
+        触发器在侧边栏最底部，所以菜单向上弹出（side="top"）。
+        用 side="right" + align="end" 时菜单会往上长到屏幕中部，与触发器断开视觉联系。
+      */}
+      <DropdownMenuContent side="top" align="start" sideOffset={6} className="w-60">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
