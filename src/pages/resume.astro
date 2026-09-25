@@ -4,16 +4,33 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { resume } from '@/data/resume';
+
+// 每个板块为空时整块隐藏，不留下空标题
+const hasSummary = resume.summary.length > 0;
+const hasContact = resume.contact.length > 0;
+const hasExperience = resume.experience.length > 0;
+const hasEducation = resume.education.length > 0;
+const hasSkills = resume.skills.length > 0;
+
+const description = resume.headline
+  ? `${resume.name} · ${resume.headline}`
+  : resume.name;
 ---
 
-<BaseLayout title="简历" description={`${resume.name} · ${resume.headline}`}>
+<BaseLayout title="简历" description={description}>
   <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-    <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <header
+      class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+    >
       <div>
         <h1 class="font-heading text-3xl font-semibold tracking-tight">
           {resume.name}
         </h1>
-        <p class="mt-1 text-muted-foreground">{resume.headline}</p>
+        {
+          resume.headline && (
+            <p class="mt-1 text-muted-foreground">{resume.headline}</p>
+          )
+        }
       </div>
       <button
         type="button"
@@ -24,98 +41,123 @@ import { resume } from '@/data/resume';
       </button>
     </header>
 
-    <p class="mt-6 leading-relaxed text-pretty">{resume.summary}</p>
+    {
+      hasSummary && (
+        <p class="mt-6 leading-relaxed text-pretty">{resume.summary}</p>
+      )
+    }
 
-    <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
-      {
-        resume.contact.map((item) => (
-          <li class="text-muted-foreground">
-            <span class="text-foreground">{item.label}：</span>
-            {item.href ? (
-              <a href={item.href} class="hover:underline">{item.value}</a>
-            ) : (
-              item.value
-            )}
-          </li>
-        ))
-      }
-    </ul>
+    {
+      hasContact && (
+        <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+          {resume.contact.map((item) => (
+            <li class="text-muted-foreground">
+              <span class="text-foreground">{item.label}：</span>
+              {item.href ? (
+                <a href={item.href} class="hover:underline">
+                  {item.value}
+                </a>
+              ) : (
+                item.value
+              )}
+            </li>
+          ))}
+        </ul>
+      )
+    }
 
-    <Separator className="my-10" />
+    {
+      hasExperience && (
+        <>
+          <Separator className="my-10" />
+          <section>
+            <h2 class="font-heading text-xl font-semibold tracking-tight">
+              工作经历
+            </h2>
+            <div class="mt-6 flex flex-col gap-4">
+              {resume.experience.map((job) => (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{job.company}</CardTitle>
+                    <div class="col-start-2 row-span-2 row-start-1 self-start justify-self-end text-right text-sm text-muted-foreground">
+                      <div>{job.period}</div>
+                      {job.location && <div>{job.location}</div>}
+                    </div>
+                    <p class="text-sm text-muted-foreground">{job.role}</p>
+                  </CardHeader>
+                  {job.highlights.length > 0 && (
+                    <CardContent>
+                      <ul class="flex flex-col gap-2 text-sm leading-relaxed">
+                        {job.highlights.map((line) => (
+                          <li class="flex gap-2">
+                            <span class="mt-2 size-1 shrink-0 rounded-full bg-muted-foreground" />
+                            <span>{line}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  )}
+                </Card>
+              ))}
+            </div>
+          </section>
+        </>
+      )
+    }
 
-    <section>
-      <h2 class="font-heading text-xl font-semibold tracking-tight">工作经历</h2>
-      <div class="mt-6 flex flex-col gap-4">
-        {
-          resume.experience.map((job) => (
-            <Card>
-              <CardHeader>
-                <CardTitle>{job.company}</CardTitle>
-                <div class="col-start-2 row-span-2 row-start-1 self-start justify-self-end text-right text-sm text-muted-foreground">
-                  <div>{job.period}</div>
-                  {job.location && <div>{job.location}</div>}
+    {
+      hasEducation && (
+        <>
+          <Separator className="my-10" />
+          <section>
+            <h2 class="font-heading text-xl font-semibold tracking-tight">
+              教育经历
+            </h2>
+            <div class="mt-6 flex flex-col gap-4">
+              {resume.education.map((edu) => (
+                <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                  <div>
+                    <p class="font-medium">{edu.school}</p>
+                    <p class="text-sm text-muted-foreground">{edu.degree}</p>
+                    {edu.highlights && edu.highlights.length > 0 && (
+                      <p class="mt-1 text-sm text-muted-foreground">
+                        {edu.highlights.join(' · ')}
+                      </p>
+                    )}
+                  </div>
+                  <p class="text-sm text-muted-foreground">{edu.period}</p>
                 </div>
-                <p class="text-sm text-muted-foreground">{job.role}</p>
-              </CardHeader>
-              <CardContent>
-                <ul class="flex flex-col gap-2 text-sm leading-relaxed">
-                  {job.highlights.map((line) => (
-                    <li class="flex gap-2">
-                      <span class="mt-2 size-1 shrink-0 rounded-full bg-muted-foreground" />
-                      <span>{line}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          ))
-        }
-      </div>
-    </section>
-
-    <Separator className="my-10" />
-
-    <section>
-      <h2 class="font-heading text-xl font-semibold tracking-tight">教育经历</h2>
-      <div class="mt-6 flex flex-col gap-4">
-        {
-          resume.education.map((edu) => (
-            <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-              <div>
-                <p class="font-medium">{edu.school}</p>
-                <p class="text-sm text-muted-foreground">{edu.degree}</p>
-                {edu.highlights && (
-                  <p class="mt-1 text-sm text-muted-foreground">
-                    {edu.highlights.join(' · ')}
-                  </p>
-                )}
-              </div>
-              <p class="text-sm text-muted-foreground">{edu.period}</p>
+              ))}
             </div>
-          ))
-        }
-      </div>
-    </section>
+          </section>
+        </>
+      )
+    }
 
-    <Separator className="my-10" />
-
-    <section>
-      <h2 class="font-heading text-xl font-semibold tracking-tight">技能</h2>
-      <div class="mt-6 flex flex-col gap-4">
-        {
-          resume.skills.map((group) => (
-            <div class="flex flex-col gap-2 sm:flex-row sm:items-baseline">
-              <p class="w-28 shrink-0 text-sm font-medium">{group.group}</p>
-              <div class="flex flex-wrap gap-1.5">
-                {group.items.map((item) => (
-                  <Badge variant="secondary">{item}</Badge>
-                ))}
-              </div>
+    {
+      hasSkills && (
+        <>
+          <Separator className="my-10" />
+          <section>
+            <h2 class="font-heading text-xl font-semibold tracking-tight">
+              技能
+            </h2>
+            <div class="mt-6 flex flex-col gap-4">
+              {resume.skills.map((group) => (
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-baseline">
+                  <p class="w-28 shrink-0 text-sm font-medium">{group.group}</p>
+                  <div class="flex flex-wrap gap-1.5">
+                    {group.items.map((item) => (
+                      <Badge variant="secondary">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))
-        }
-      </div>
-    </section>
+          </section>
+        </>
+      )
+    }
   </div>
 </BaseLayout>
 

@@ -9,37 +9,61 @@ export type SocialLink = {
 };
 
 /**
- * 全站配置。改这里就能改站点的名字、导航和页脚。
- * 注意：url 必须和 astro.config.mjs 里的 site 保持一致，
- * 否则 sitemap 与 RSS 里的绝对链接会指向错误域名。
+ * 全站配置。
+ *
+ * 除 title / author 外，所有字段都可以留空 —— 留空时页面对应部分会自动隐藏，
+ * 不会留下空标签或占位符。想好了再往里面填，随时改随时生效。
  */
 export const site = {
-  /** 站点标题 / 你的名字 */
-  title: '张三',
-  /** 一句话简介，用于首页首屏与 SEO description */
-  description: '前端工程师，关注 Web 性能、开发者体验与设计系统。',
-  /** 作者名，用于 RSS 与页脚版权 */
-  author: '张三',
-  /** 联系邮箱 */
-  email: 'hello@example.com',
-  /** 部署域名，需与 astro.config.mjs 的 site 一致 */
-  url: 'https://example.com',
-  /** 头像，放在 public/ 下，用绝对路径引用 */
-  avatar: '/avatar.svg',
+  /** 站点标题 / 你的名字，显示在页头与浏览器标签页 */
+  title: '张豆豆',
 
-  /** 主导航 */
+  /** 作者名，用于页脚版权与 RSS */
+  author: '张豆豆',
+
+  /** 联系邮箱，显示在页脚 */
+  email: '166360735@qq.com',
+
+  /**
+   * 一句话简介。留空时首页只显示名字，SEO description 回退到站点标题。
+   * 想好了再填，例：'前端工程师，关注 Web 性能与开发者体验。'
+   */
+  description: '',
+
+  /**
+   * 部署域名。必须和 astro.config.mjs 里的 site 保持一致，
+   * 否则 sitemap 与 RSS 中的绝对链接会指向错误域名。
+   */
+  url: 'https://example.com',
+
+  /**
+   * 头像。把图片放进 public/ 后填绝对路径，例如 '/avatar.jpg'。
+   * 留空则自动用名字首字生成字母头像。
+   */
+  avatar: '',
+
+  /**
+   * 「关于」页的正文，每个字符串是一个段落。
+   * 留空时该页只显示名字与联系方式。
+   */
+  bio: [] as string[],
+
+  /**
+   * 主导航。不想要的项整行删掉即可。
+   *
+   * 「关于」默认不在导航里，因为还没写自我介绍时它是个空页面。
+   * 等你把上面的 bio 填上，再把这行加回来：{ label: '关于', href: '/about' }
+   */
   nav: [
     { label: '首页', href: '/' },
     { label: '作品', href: '/projects' },
     { label: '博客', href: '/blog' },
     { label: '简历', href: '/resume' },
-    { label: '关于', href: '/about' },
   ] as NavItem[],
 
-  /** 社交链接，展示在页脚与简历页 */
-  social: [
-    { label: 'GitHub', href: 'https://github.com/yourname' },
-    { label: 'X', href: 'https://x.com/yourname' },
-    { label: '邮箱', href: 'mailto:hello@example.com' },
-  ] as SocialLink[],
+  /**
+   * 社交链接，显示在页脚。留空则页脚只显示邮箱与 RSS。
+   * 例：{ label: 'GitHub', href: 'https://github.com/1234cuyf' }
+   */
+  social: [] as SocialLink[],
 };

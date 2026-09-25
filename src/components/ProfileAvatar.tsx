@@ -1,7 +1,7 @@
 import { Avatar } from '@/components/ui/avatar';
 
 /**
- * 静态头像。
+ * 头像。没配图片时自动用名字首字生成字母头像，不需要任何图片资源。
  *
  * 为什么不用 AvatarImage / AvatarFallback：
  * Base UI 的 AvatarImage 只在图片进入 'loaded' 状态后才渲染（见
@@ -13,8 +13,7 @@ import { Avatar } from '@/components/ui/avatar';
  * 都是 `size-full` 的普通流元素，Base UI 依赖"同一时刻只渲染其中一个"来保证布局，
  * 两者同时渲染会破坏排版。
  *
- * 因此这里用 Avatar 根节点（提供圆角、描边、尺寸）+ 一个原生 <img>。
- * 如果将来想让头像水合以获得 fallback 行为，给它加 client:load 并换回 AvatarImage。
+ * 如果将来想让头像水合以获得加载失败回退行为，给它加 client:load 并换回 AvatarImage。
  *
  * 另外注意：Astro 会独立渲染 .astro 文件里的每个框架组件，React context 不跨边界传递，
  * 所以这类组合必须整体封装在 .tsx 内。
@@ -23,24 +22,34 @@ export default function ProfileAvatar({
   src,
   name,
   className,
-  size = 96,
 }: {
-  src: string;
+  /** 图片路径，例如 '/avatar.jpg'。留空则显示字母头像。 */
+  src?: string;
   name: string;
   className?: string;
-  size?: number;
 }) {
+  const initial = name.trim().slice(0, 1) || '?';
+
   return (
     <Avatar className={className}>
-      <img
-        src={src}
-        alt={name}
-        width={size}
-        height={size}
-        loading="lazy"
-        decoding="async"
-        className="size-full rounded-full object-cover"
-      />
+      {src ? (
+        <img
+          src={src}
+          alt={name}
+          width={96}
+          height={96}
+          loading="lazy"
+          decoding="async"
+          className="size-full rounded-full object-cover"
+        />
+      ) : (
+        <span
+          aria-hidden="true"
+          className="flex size-full items-center justify-center rounded-full bg-muted text-2xl font-medium text-muted-foreground"
+        >
+          {initial}
+        </span>
+      )}
     </Avatar>
   );
 }

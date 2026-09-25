@@ -57,6 +57,26 @@ src/
 └─ pages/                   # 路由（文件即路由）
 ```
 
+## 当前状态：最小站点
+
+站点现在是**故意留空**的：没有示例文章、没有示例作品，简历里只有名字和邮箱。
+
+这些字段全部可以留空，留空时页面对应部分会**自动隐藏**，不会出现空标题、空列表或「待补充」这类占位文案：
+
+| 留空的字段 | 效果 |
+|---|---|
+| `site.description` | 首页不显示副标题；SEO description 回退到站点标题 |
+| `site.avatar` | 自动用名字首字生成字母头像 |
+| `site.social` | 页脚只显示邮箱与 RSS |
+| `site.bio` | 「关于」页只显示名字与联系方式 |
+| `resume.headline` / `summary` | 简历页不显示对应行 |
+| `resume.experience` / `education` / `skills` | 整个板块隐藏 |
+
+想好了哪块就往哪块填，随时填随时生效。
+
+> `npm run build` 时会出现两条 `[glob-loader] No files found matching ...` 警告 ——
+> 那是「内容目录为空」的正常提示，不是错误。
+
 ## 日常操作
 
 ### 加一篇文章
@@ -96,11 +116,26 @@ featured: true                      # 是否进首页精选区
 
 ### 改个人信息
 
-- 站点名 / 简介 / 导航 / 社交链接 / 头像 → `src/data/site.ts`
-- 简历内容 → `src/data/resume.ts`
-- 头像替换 → 覆盖 `public/avatar.svg`（换成 `avatar.jpg` 记得同步改 `site.ts` 的路径）
+全部集中在 `src/data/site.ts`，每个字段上方都有注释：
+
+| 字段 | 说明 |
+|---|---|
+| `title` / `author` | 你的名字 |
+| `email` | 显示在页脚与「关于」页 |
+| `description` | 一句话简介，可留空 |
+| `avatar` | 图片放进 `public/` 后填 `'/avatar.jpg'`；留空则用名字首字 |
+| `bio` | 「关于」页的段落数组，可留空 |
+| `nav` | 导航项，不想要的整行删掉 |
+| `social` | 社交链接数组，可留空 |
+| `url` | 部署后填真实域名 |
+
+简历内容在 `src/data/resume.ts`，各数组上方注释里写了每一条的字段格式。
+
+其他：
+
 - 站点图标 → 覆盖 `public/favicon.svg`
 - 主题色 / 圆角 → `src/styles/global.css` 里的 CSS 变量（`:root` 与 `.dark` 两处都要改）
+- 想让「关于」出现在导航里 → 把 `site.ts` 的 `nav` 里那一行加回来（注释里写了）
 
 ## 必须知道的约束
 
