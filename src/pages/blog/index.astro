@@ -6,8 +6,10 @@ import {
   Empty,
   EmptyDescription,
   EmptyHeader,
+  EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
+import { BookOpenIcon } from 'lucide-react';
 import { getPosts } from '@/lib/content';
 
 const posts = await getPosts();
@@ -26,12 +28,22 @@ const posts = await getPosts();
       posts.length === 0 ? (
         <div class="mt-10">
           <Empty>
+            <EmptyMedia variant="icon">
+              <BookOpenIcon />
+            </EmptyMedia>
             <EmptyHeader>
               <EmptyTitle>还没有文章</EmptyTitle>
               <EmptyDescription>
-                {import.meta.env.DEV
-                  ? '往 src/content/blog/ 里添加一个 Markdown 文件就会出现在这里。'
-                  : '暂时还没有内容。'}
+                {
+                  import.meta.env.DEV ? (
+                    '往 src/content/blog/ 里添加一个 Markdown 文件就会出现在这里。'
+                  ) : (
+                    <>
+                      文章还在整理中。可以先 <a href="/projects">看看作品</a>，或者
+                      <a href="/rss.xml">订阅 RSS</a> 等更新。
+                    </>
+                  )
+                }
               </EmptyDescription>
             </EmptyHeader>
           </Empty>

@@ -6,8 +6,10 @@ import {
   Empty,
   EmptyDescription,
   EmptyHeader,
+  EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty';
+import { FolderIcon } from 'lucide-react';
 import { getProjects } from '@/lib/content';
 
 const projects = await getProjects();
@@ -28,12 +30,22 @@ const projects = await getProjects();
       projects.length === 0 ? (
         <div class="mt-10">
           <Empty>
+            <EmptyMedia variant="icon">
+              <FolderIcon />
+            </EmptyMedia>
             <EmptyHeader>
               <EmptyTitle>还没有作品</EmptyTitle>
               <EmptyDescription>
-                {import.meta.env.DEV
-                  ? '往 src/content/projects/ 里添加一个 Markdown 文件就会出现在这里。'
-                  : '暂时还没有内容。'}
+                {
+                  import.meta.env.DEV ? (
+                    '往 src/content/projects/ 里添加一个 Markdown 文件就会出现在这里。'
+                  ) : (
+                    <>
+                      项目还在整理中。可以先 <a href="/blog">看看文章</a>，或者
+                      <a href="/resume">看我的简历</a>。
+                    </>
+                  )
+                }
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
