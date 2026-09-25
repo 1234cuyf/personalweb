@@ -138,15 +138,17 @@ function UserMenu({ config }: { config: SiteConfig }) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent side="right" align="end" sideOffset={4} className="w-60">
-        <DropdownMenuLabel className="p-0 font-normal">
-          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <BrandAvatar src={config.avatar} name={config.author} className="size-8 rounded-lg" />
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{config.author}</span>
-              <span className="truncate text-xs text-muted-foreground">{config.email}</span>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="p-0 font-normal">
+            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+              <BrandAvatar src={config.avatar} name={config.author} className="size-8 rounded-lg" />
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{config.author}</span>
+                <span className="truncate text-xs text-muted-foreground">{config.email}</span>
+              </div>
             </div>
-          </div>
-        </DropdownMenuLabel>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
 
         <DropdownMenuSeparator />
 

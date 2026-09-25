@@ -223,6 +223,32 @@ Base UI 的 `AvatarImage` 只在图片 `loaded` 后才渲染，而该状态只�
 导航项的图标在 `src/data/site.ts` 的 `nav[].icon` 里填名字，可选值见 `AppSidebar.tsx` 的 `ICONS` 映射
 （`home` / `folder` / `book` / `file-text`）。
 
+### 8. 两个 Base UI 部件必须在 Group 内，否则整页白屏
+
+以下两个部件会从 context 取父级 Group，**不在 Group 里会直接抛错**（`astro check` 抓不到）：
+
+| 部件 | 必须放在 |
+|---|---|
+| `DropdownMenuLabel` | `<DropdownMenuGroup>` 或 `<DropdownMenuRadioGroup>` |
+| `DropdownMenuRadioItem` | `<DropdownMenuRadioGroup>` |
+
+错误长这样：
+
+```
+Base UI: MenuGroupContext is missing. Menu group parts must be used within
+<Menu.Group> or <Menu.RadioGroup>.
+```
+
+`DropdownMenuItem`、`DropdownMenuSeparator`、`DropdownMenuCheckboxItem` 不强制。
+
+**这个错误特别致命**：弹层是在点击时才渲染的，所以构建、类型检查、页面加载全都正常，
+一点开菜单就抛异常 → React 卸载整棵树 → **整页白屏**。而且因为页面内容住在 `SiteShell`
+岛内部，外壳的任何未捕获异常都会把内容一起干掉。
+
+`SiteShell.tsx` 里的 `ShellBoundary` 就是针对这点加的安全网：外壳渲染失败时降级为
+`PlainShell`（只有导航和内容的简易布局）。如果浏览器控制台出现 `[SiteShell] 渲染失败`，
+说明踩到了这类问题。
+
 ## 部署到 Cloudflare
 
 远端仓库：`git@github.com:1234cuyf/personalweb.git`

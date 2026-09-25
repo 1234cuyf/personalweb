@@ -1,4 +1,10 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import {
+  Component,
+  useEffect,
+  useState,
+  type ErrorInfo,
+  type ReactNode,
+} from 'react';
 
 import {
   SidebarInset,
@@ -10,6 +16,76 @@ import AppSidebar, {
   type NavItem,
   type SiteConfig,
 } from '@/components/AppSidebar';
+
+/**
+ * 外壳崩溃时的降级视图。
+ *
+ * 页面内容是作为 children 待在岛内部的，所以外壳里任何未捕获的异常都会把
+ * 整页一起干掉（表现就是白屏）。这个降级视图保证即使侧边栏坏了，
+ * 内容与导航仍然可用。
+ */
+function PlainShell({
+  nav,
+  config,
+  children,
+}: {
+  nav: NavItem[];
+  config: SiteConfig;
+  children: ReactNode;
+}) {
+  return (
+    <div className="flex min-h-svh flex-col">
+      <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border px-4 py-3 text-sm">
+        <a href="/" className="font-medium">
+          {config.author}
+        </a>
+        <nav className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          {nav.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+      </header>
+
+      <div className="flex-1">{children}</div>
+
+      <footer className="border-t border-border px-4 py-4 text-sm text-muted-foreground">
+        © {new Date().getFullYear()} {config.author}
+      </footer>
+    </div>
+  );
+}
+
+type BoundaryProps = {
+  fallback: ReactNode;
+  children: ReactNode;
+};
+
+type BoundaryState = {
+  failed: boolean;
+};
+
+/** 捕获外壳渲染期的异常，避免整页白屏。 */
+class ShellBoundary extends Component<BoundaryProps, BoundaryState> {
+  state: BoundaryState = { failed: false };
+
+  static getDerivedStateFromError(): BoundaryState {
+    return { failed: true };
+  }
+
+  componentDidCatch(error: unknown, info: ErrorInfo) {
+    console.error('[SiteShell] 渲染失败，已降级为简易外壳：', error, info);
+  }
+
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
 
 /**
  * 整站外壳。
@@ -42,25 +118,33 @@ export default function SiteShell({
   }, []);
 
   return (
-    <TooltipProvider>
-      <SidebarProvider open={open} onOpenChange={setOpen}>
-        <AppSidebar nav={nav} currentPath={currentPath} config={config} />
+    <ShellBoundary
+      fallback={
+        <PlainShell nav={nav} config={config}>
+          {children}
+        </PlainShell>
+      }
+    >
+      <TooltipProvider>
+        <SidebarProvider open={open} onOpenChange={setOpen}>
+          <AppSidebar nav={nav} currentPath={currentPath} config={config} />
 
-        <SidebarInset>
-          <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border/60 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <span className="truncate text-sm font-medium">{config.title}</span>
-          </header>
+          <SidebarInset>
+            <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border/60 px-4">
+              <SidebarTrigger className="-ml-1" />
+              <span className="truncate text-sm font-medium">{config.title}</span>
+            </header>
 
-          <div className="flex-1">{children}</div>
+            <div className="flex-1">{children}</div>
 
-          <footer className="border-t border-border/60 px-6 py-6 text-sm text-muted-foreground">
-            <p>
-              © {new Date().getFullYear()} {config.author}
-            </p>
-          </footer>
-        </SidebarInset>
-      </SidebarProvider>
-    </TooltipProvider>
+            <footer className="border-t border-border/60 px-6 py-6 text-sm text-muted-foreground">
+              <p>
+                © {new Date().getFullYear()} {config.author}
+              </p>
+            </footer>
+          </SidebarInset>
+        </SidebarProvider>
+      </TooltipProvider>
+    </ShellBoundary>
   );
 }
