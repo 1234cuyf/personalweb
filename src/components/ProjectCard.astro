@@ -1,0 +1,51 @@
+---
+import { Badge } from '@/components/ui/badge';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { formatDate, type Project } from '@/lib/content';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { title, description, pubDate, tech, repo, demo, featured } =
+  project.data;
+---
+
+<Card className="h-full">
+  <CardHeader>
+    <CardTitle>
+      <a href={`/projects/${project.id}`} class="hover:underline">
+        {title}
+      </a>
+    </CardTitle>
+    {featured && <CardAction><Badge variant="secondary">精选</Badge></CardAction>}
+    <CardDescription>{description}</CardDescription>
+  </CardHeader>
+
+  {
+    tech.length > 0 && (
+      <CardContent className="flex flex-wrap gap-1.5">
+        {tech.map((item) => (
+          <Badge variant="outline">{item}</Badge>
+        ))}
+      </CardContent>
+    )
+  }
+
+  <CardFooter className="mt-auto justify-between gap-3 text-xs text-muted-foreground">
+    <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+    <div class="flex gap-3">
+      {repo && <a href={repo} rel="noopener">代码</a>}
+      {demo && <a href={demo} rel="noopener">演示</a>}
+    </div>
+  </CardFooter>
+</Card>

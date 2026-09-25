@@ -1,0 +1,61 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { buttonVariants } from '@/components/ui/button';
+import { site } from '@/data/site';
+---
+
+<BaseLayout
+  title="关于"
+  description={`关于 ${site.author} —— ${site.description}`}
+>
+  <article
+    class="prose prose-neutral dark:prose-invert mx-auto max-w-3xl px-4 py-16 sm:px-6"
+  >
+    <h1>关于我</h1>
+
+    <p>
+      我是 {site.author}，一名前端工程师。日常在做的事情大概可以概括为：把复杂的界面拆成可维护的组件，
+      把慢的页面变快，以及尽量少写将来会后悔的代码。
+    </p>
+
+    <h2>我在关注什么</h2>
+
+    <p>
+      过去几年主要在做设计系统与性能优化。这两件事看起来离得很远，实际上都在回答同一个问题：
+      <strong>如何让正确的做法成为最容易的做法</strong>。
+    </p>
+
+    <ul>
+      <li>设计系统：让一致性由约束保证，而不是靠人记得。</li>
+      <li>性能：先测量再优化，拒绝凭直觉动手。</li>
+      <li>开发者体验：构建时间、错误信息、调试路径，都直接影响产出质量。</li>
+    </ul>
+
+    <h2>这个站</h2>
+
+    <p>
+      站点的源码是公开的。它是一个纯静态站点，没有数据库也没有后端，文章以 Markdown
+      文件的形式存在仓库里。想了解技术细节，可以看 <a href="/blog">博客</a> 里的相关文章。
+    </p>
+
+    <h2>联系</h2>
+
+    <p>
+      有想法想聊，或者发现有写错的地方，都欢迎写信给我：
+      <a href={`mailto:${site.email}`}>{site.email}</a>。
+    </p>
+
+    <hr />
+
+    <p>
+      如果你想看更结构化的一份经历，
+      <a href="/resume">这里是我的简历</a>。
+    </p>
+  </article>
+
+  <div class="mx-auto max-w-3xl px-4 pb-16 sm:px-6">
+    <a href="/resume" class={buttonVariants({ variant: 'outline' })}>
+      查看简历
+    </a>
+  </div>
+</BaseLayout>

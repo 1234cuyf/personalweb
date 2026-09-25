@@ -1,0 +1,43 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from '@/components/ui/empty';
+import { getPosts } from '@/lib/content';
+
+const posts = await getPosts();
+---
+
+<BaseLayout title="博客" description="踩坑记录、读书笔记与阶段性复盘">
+  <section class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    <h1 class="font-heading text-3xl font-semibold tracking-tight">博客</h1>
+    <p class="mt-3 text-muted-foreground text-pretty">
+      踩坑记录、读书笔记与阶段性复盘。共 {posts.length} 篇。
+    </p>
+
+    {
+      posts.length === 0 ? (
+        <div class="mt-10">
+          <Empty>
+            <EmptyHeader>
+              <EmptyTitle>还没有文章</EmptyTitle>
+              <EmptyDescription>
+                往 src/content/blog/ 里添加一个 Markdown 文件就会出现在这里。
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        </div>
+      ) : (
+        <div class="mt-10 flex flex-col gap-3">
+          {posts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      )
+    }
+  </section>
+</BaseLayout>

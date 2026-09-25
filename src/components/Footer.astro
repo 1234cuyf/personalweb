@@ -1,0 +1,29 @@
+---
+import { site } from '@/data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-border/60">
+  <div
+    class="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6"
+  >
+    <p>© {year} {site.author}</p>
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+      {
+        site.social.map((link) => (
+          <a
+            href={link.href}
+            class="transition-colors hover:text-foreground"
+            rel="noopener"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <a href="/rss.xml" class="transition-colors hover:text-foreground">
+        RSS
+      </a>
+    </div>
+  </div>
+</footer>

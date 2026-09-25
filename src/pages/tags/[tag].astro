@@ -1,0 +1,86 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import { Separator } from '@/components/ui/separator';
+import {
+  collectTags,
+  getPosts,
+  getProjects,
+  type Post,
+  type Project,
+} from '@/lib/content';
+
+interface Props {
+  tag: string;
+  posts: Post[];
+  projects: Project[];
+}
+
+export async function getStaticPaths() {
+  const [posts, projects] = await Promise.all([getPosts(), getProjects()]);
+
+  return collectTags(posts, projects).map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts.filter((post) => post.data.tags.includes(tag)),
+      projects: projects.filter((project) => project.data.tags.includes(tag)),
+    },
+  }));
+}
+
+const { tag, posts, projects } = Astro.props;
+const total = posts.length + projects.length;
+---
+
+<BaseLayout
+  title={`标签：${tag}`}
+  description={`标签「${tag}」下的全部内容，共 ${total} 项`}
+>
+  <section class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    <a
+      href="/blog"
+      class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+    >
+      ← 全部文章
+    </a>
+
+    <h1 class="mt-6 font-heading text-3xl font-semibold tracking-tight">
+      标签：{tag}
+    </h1>
+    <p class="mt-3 text-muted-foreground">共 {total} 项内容。</p>
+
+    {
+      projects.length > 0 && (
+        <>
+          <h2 class="mt-10 font-heading text-xl font-semibold tracking-tight">
+            作品
+          </h2>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            {projects.map((project) => (
+              <ProjectCard project={project} />
+            ))}
+          </div>
+        </>
+      )
+    }
+
+    {projects.length > 0 && posts.length > 0 && <Separator className="my-10" />}
+
+    {
+      posts.length > 0 && (
+        <>
+          <h2 class="mt-10 font-heading text-xl font-semibold tracking-tight">
+            文章
+          </h2>
+          <div class="mt-4 flex flex-col gap-3">
+            {posts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        </>
+      )
+    }
+  </section>
+</BaseLayout>

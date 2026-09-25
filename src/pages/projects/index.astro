@@ -1,0 +1,43 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from '@/components/ui/empty';
+import { getProjects } from '@/lib/content';
+
+const projects = await getProjects();
+---
+
+<BaseLayout title="作品" description="我做过的项目，以及当时的取舍">
+  <section class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+    <h1 class="font-heading text-3xl font-semibold tracking-tight">作品</h1>
+    <p class="mt-3 max-w-2xl text-muted-foreground text-pretty">
+      挑选了一些有代表性的项目，写清楚当时的约束、做的取舍和最终结果。
+    </p>
+
+    {
+      projects.length === 0 ? (
+        <div class="mt-10">
+          <Empty>
+            <EmptyHeader>
+              <EmptyTitle>还没有作品</EmptyTitle>
+              <EmptyDescription>
+                往 src/content/projects/ 里添加一个 Markdown 文件就会出现在这里。
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        </div>
+      ) : (
+        <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </div>
+      )
+    }
+  </section>
+</BaseLayout>

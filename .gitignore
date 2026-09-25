@@ -1,0 +1,22 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# npm cache redirected into the workspace (sandbox requires this)
+.npm-cache/
+
+# environment
+.env
+.env.production
+
+# logs
+*.log
+npm-debug.log*
+
+# editor / os
+.DS_Store
+.vscode/
+.idea/

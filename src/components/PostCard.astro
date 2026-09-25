@@ -1,0 +1,42 @@
+---
+import { Badge } from '@/components/ui/badge';
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemFooter,
+  ItemTitle,
+} from '@/components/ui/item';
+import { formatDate, type Post } from '@/lib/content';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, tags } = post.data;
+---
+
+<Item variant="muted" className="items-start">
+  <ItemContent>
+    <ItemTitle>
+      <a href={`/blog/${post.id}`} class="hover:underline">{title}</a>
+    </ItemTitle>
+    <ItemDescription>{description}</ItemDescription>
+  </ItemContent>
+
+  <ItemFooter className="mt-2 flex-wrap gap-2 text-xs text-muted-foreground">
+    <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+    {
+      tags.length > 0 && (
+        <div class="flex flex-wrap gap-1">
+          {tags.map((tag) => (
+            <a href={`/tags/${encodeURIComponent(tag)}/`}>
+              <Badge variant="ghost">{tag}</Badge>
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </ItemFooter>
+</Item>

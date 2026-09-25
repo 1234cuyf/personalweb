@@ -1,0 +1,20 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { buttonVariants } from '@/components/ui/button';
+---
+
+<BaseLayout title="页面不存在" description="找不到这个页面">
+  <section
+    class="mx-auto flex max-w-5xl flex-col items-center px-4 py-24 text-center sm:px-6"
+  >
+    <p class="font-heading text-6xl font-semibold tracking-tight">404</p>
+    <h1 class="mt-4 font-heading text-xl font-medium">这个页面不存在</h1>
+    <p class="mt-2 max-w-md text-muted-foreground text-pretty">
+      链接可能已经失效，或者地址输错了。你可以回到首页，或者去看看文章。
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="/" class={buttonVariants()}>回到首页</a>
+      <a href="/blog" class={buttonVariants({ variant: 'outline' })}>看看文章</a>
+    </div>
+  </section>
+</BaseLayout>

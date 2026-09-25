@@ -1,0 +1,90 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import PostCard from '@/components/PostCard.astro';
+import { Separator } from '@/components/ui/separator';
+import ProfileAvatar from '@/components/ProfileAvatar';
+import { buttonVariants } from '@/components/ui/button';
+import { getPosts, getProjects } from '@/lib/content';
+import { site } from '@/data/site';
+
+const [projects, posts] = await Promise.all([getProjects(), getPosts()]);
+
+const featured = projects.filter((project) => project.data.featured);
+const shownProjects = (featured.length > 0 ? featured : projects).slice(0, 3);
+const latestPosts = posts.slice(0, 3);
+---
+
+<BaseLayout>
+  <section class="mx-auto max-w-5xl px-4 pt-16 pb-12 sm:px-6 sm:pt-24">
+    <div
+      class="flex flex-col-reverse items-start gap-8 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div>
+        <h1
+          class="font-heading text-4xl font-semibold tracking-tight text-balance sm:text-5xl"
+        >
+          你好，我是 {site.author}
+        </h1>
+        <p class="mt-5 max-w-2xl text-lg text-muted-foreground text-pretty">
+          {site.description}
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="/projects" class={buttonVariants({ size: 'lg' })}>看看作品</a>
+          <a
+            href="/resume"
+            class={buttonVariants({ variant: 'outline', size: 'lg' })}>我的简历</a
+          >
+        </div>
+      </div>
+
+      <ProfileAvatar
+        src={site.avatar}
+        name={site.author}
+        className="size-24 shrink-0"
+      />
+    </div>
+  </section>
+
+  <div class="mx-auto max-w-5xl px-4 sm:px-6">
+    <Separator />
+  </div>
+
+  <section class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+    <div class="flex items-baseline justify-between gap-4">
+      <h2 class="font-heading text-xl font-semibold tracking-tight">
+        {featured.length > 0 ? '精选作品' : '最近作品'}
+      </h2>
+      <a
+        href="/projects"
+        class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        全部作品 →
+      </a>
+    </div>
+
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {shownProjects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </section>
+
+  <div class="mx-auto max-w-5xl px-4 sm:px-6">
+    <Separator />
+  </div>
+
+  <section class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+    <div class="flex items-baseline justify-between gap-4">
+      <h2 class="font-heading text-xl font-semibold tracking-tight">最新文章</h2>
+      <a
+        href="/blog"
+        class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        全部文章 →
+      </a>
+    </div>
+
+    <div class="mt-6 flex flex-col gap-3">
+      {latestPosts.map((post) => <PostCard post={post} />)}
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,48 @@
+---
+import { site } from '@/data/site';
+import ThemeToggle from '@/components/ThemeToggle';
+import MobileNav from '@/components/MobileNav';
+
+const path = Astro.url.pathname;
+
+function isActive(href: string): boolean {
+  if (href === '/') return path === '/';
+  return path === href || path.startsWith(`${href}/`);
+}
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur"
+>
+  <div class="mx-auto flex h-14 max-w-5xl items-center gap-4 px-4 sm:px-6">
+    <a href="/" class="font-heading font-semibold tracking-tight">
+      {site.title}
+    </a>
+
+    <nav class="ml-auto hidden items-center gap-1 text-sm sm:flex">
+      {
+        site.nav.map((item) => (
+          <a
+            href={item.href}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+            class:list={[
+              'rounded-md px-2.5 py-1.5 transition-colors',
+              isActive(item.href)
+                ? 'bg-muted text-foreground'
+                : 'text-muted-foreground hover:text-foreground',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="ml-auto flex items-center gap-1 sm:ml-0">
+      <ThemeToggle client:idle />
+      <div class="sm:hidden">
+        <MobileNav items={site.nav} currentPath={path} client:visible />
+      </div>
+    </div>
+  </div>
+</header>
