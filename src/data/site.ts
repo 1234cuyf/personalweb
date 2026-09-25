@@ -39,10 +39,10 @@ export const site = {
   url: 'https://10090102.xyz',
 
   /**
-   * 头像。把图片放进 public/ 后填绝对路径，例如 '/avatar.jpg'。
+   * 头像。填 public/ 下的绝对路径，例如 '/avatar.jpg'。
    * 留空则自动用名字首字生成字母头像。
    */
-  avatar: '',
+  avatar: '/avatar.png',
 
   /**
    * 「关于」页的正文，每个字符串是一个段落。
